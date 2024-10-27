@@ -2,14 +2,15 @@
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Endpoint = Infrastructure.Entities.Endpoint;
+using Service;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     public class EndpointController : ControllerBase
     {
-        private readonly IEndpointInternalRepo _repository;
-        public EndpointController(IEndpointInternalRepo repo) 
+        private readonly IEndpointInternalService _repository;
+        public EndpointController(IEndpointInternalService repo) 
         {
             _repository = repo;
         }

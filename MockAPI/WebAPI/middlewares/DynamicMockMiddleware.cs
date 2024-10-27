@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Interfaces;
 using Infrastructure.Enums;
 using HttpMethods = Infrastructure.Enums.HttpMethods;
+using Service;
+using Microsoft.AspNetCore.Http;
 
 namespace WebAPI.middlewares
 {
@@ -19,7 +21,7 @@ namespace WebAPI.middlewares
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var endpointRepo = scope.ServiceProvider.GetRequiredService<IEndpointInternalRepo>();
+                var endpointRepo = scope.ServiceProvider.GetRequiredService<IEndpointInternalService>();
                 var path = context.Request.Path.Value.ToLower();
                 var method = context.Request.Method.ToUpper();
 
@@ -43,7 +45,14 @@ namespace WebAPI.middlewares
                         context.Response.StatusCode = 200;
 
                         // Write the mock response
-                        await context.Response.WriteAsync(mockEndpoint.MockResponse);
+                        if (mockEndpoint.ResponseObject != null)
+                        {
+                            await context.Response.WriteAsync(mockEndpoint.ResponseObject.ToJson());
+                        }
+                        else
+                        {
+                            await context.Response.WriteAsync("");
+                        }
                     }
                     else
                     {

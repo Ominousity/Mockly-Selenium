@@ -46,6 +46,18 @@ namespace Infrastructure.Entities
 
             return responseObject;
         }
+
+        public string ToJson()
+        {
+            var dictionary = new Dictionary<string, object>();
+
+            foreach (var kvp in Data)
+            {
+                dictionary[kvp.Key] = kvp.Value.Return();
+            }
+
+            return JsonSerializer.Serialize(dictionary);
+        }
     }
 
     public class ObjectType
@@ -142,7 +154,34 @@ namespace Infrastructure.Entities
 
         public object? Return()
         {
-            return Convert.ChangeType(Value, Type);
+            // Handle IConvertible types (like int, string, etc.)
+            if (Value is IConvertible || Value == null)
+            {
+                return Convert.ChangeType(Value, Type);
+            }
+            // Handle Dictionary<string, ObjectType> specifically
+            if (Value is Dictionary<string, ObjectType> dictionary)
+            {
+                var convertedDict = new Dictionary<string, object>();
+                foreach (var kvp in dictionary)
+                {
+                    convertedDict[kvp.Key] = kvp.Value.Return();
+                }
+                return convertedDict;
+            }
+            // Handle List<ObjectType> specifically
+            if (Value is List<ObjectType> list)
+            {
+                var convertedList = new List<object>();
+                foreach (var item in list)
+                {
+                    convertedList.Add(item.Return());
+                }
+                return convertedList;
+            }
+
+            // If the type is unhandled, return Value directly
+            return Value;
         }
     }
 }

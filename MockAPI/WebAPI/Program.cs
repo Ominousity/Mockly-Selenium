@@ -1,7 +1,7 @@
 using Infrastructure;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Service;
 using WebAPI.middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +18,8 @@ builder.Services.AddDbContext<ResponseObjectDbContext>(options =>
 
 builder.Services.AddScoped<IResponseObjectInternalRepo, ResponseObjectInternalRepo>();
 builder.Services.AddScoped<IEndpointInternalRepo, EndpointInternalRepo>();
+builder.Services.AddScoped<IEndpointInternalService, EndpointInternalService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>

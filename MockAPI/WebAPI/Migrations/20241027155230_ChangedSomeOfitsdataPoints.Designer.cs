@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace WebAPI.Migrations
 {
-    [DbContext(typeof(ResponseObjectDbContext))]
-    [Migration("20241026174919_AddResponseObjectData")]
-    partial class AddResponseObjectData
+    [DbContext(typeof(EndpointDbContext))]
+    [Migration("20241027155230_ChangedSomeOfitsdataPoints")]
+    partial class ChangedSomeOfitsdataPoints
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,23 +25,40 @@ namespace WebAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Infrastructure.Entities.ResponseObject", b =>
+            modelBuilder.Entity("Infrastructure.Entities.Endpoint", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("Data")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                    b.Property<int>("Delay")
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("SerializedData")
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("RandomizeResponse")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ResponseObject")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("shouldFail")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ResponseObjects");
+                    b.ToTable("Endpoints");
                 });
 #pragma warning restore 612, 618
         }
