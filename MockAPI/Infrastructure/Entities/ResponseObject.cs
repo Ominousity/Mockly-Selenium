@@ -180,6 +180,16 @@ namespace Infrastructure.Entities
                 return convertedList;
             }
 
+            if (Value is ObjectType[] array)
+            {
+                var convertedArray = new List<object>();
+                foreach (var item in array)
+                {
+                    convertedArray.Add(item.Return());
+                }
+                return convertedArray.ToArray();
+            }
+
             // If the type is unhandled, return Value directly
             return Value;
         }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Service
@@ -88,7 +89,66 @@ namespace Service
         private object WhatKindOfString(object value)
         {
             string stringValue = (string)value;
+            if (isDateTime(stringValue))
+            {
+                return DateTime.Now.ToString();
+            }
+            else if (isGuid(stringValue))
+            {
+                return Guid.NewGuid().ToString();
+            }
+            else if (isNumber(stringValue))
+            {
+                return new Random().Next(0, 100).ToString();
+            }
+            else if (isBoolean(stringValue))
+            {
+                return (new Random().Next(0, 1) == 1).ToString();
+            }
+            else if (isStreetAddress(stringValue))
+            {
+                return "1234 Elm St";
+            }
+            else if (IsName(stringValue))
+            {
+                return "John Doe";
+            }
             return stringValue;
+        }
+
+        private bool isDateTime(string value)
+        {
+            DateTime dateTime;
+            return DateTime.TryParse(value, out dateTime);
+        }
+
+        private bool isGuid(string value)
+        {
+            Guid guid;
+            return Guid.TryParse(value, out guid);
+        }
+
+        private bool isNumber(string value)
+        {
+            int number;
+            return int.TryParse(value, out number);
+        }
+
+        private bool isBoolean(string value)
+        {
+            bool boolean;
+            return bool.TryParse(value, out boolean);
+        }
+
+        private bool isStreetAddress(string value)
+        {
+            return Regex.IsMatch(value, @"\b(?:Street|Avenue|Boulevard|Rd|Ln|St|Ave|Dr)\b",
+                         RegexOptions.IgnoreCase);
+        }
+
+        private bool IsName(string input)
+        {
+            return Regex.IsMatch(input, @"^[A-Z][a-z]+$");
         }
     }
 }
