@@ -24,10 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Allow requests from this origin
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials(); // Use this if credentials (e.g., cookies, authorization headers) are needed
+        policy.AllowAnyOrigin();
     });
 });
 

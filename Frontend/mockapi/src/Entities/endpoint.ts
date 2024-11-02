@@ -3,7 +3,8 @@ export interface Endpoint {
     name: string;
     path: string;
     method: number;
-    mockResponse: string;
+    responseObject: string;
     delay: number;
     shouldFail: boolean;
+    randomizeResponse: boolean;
 }

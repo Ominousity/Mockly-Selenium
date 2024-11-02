@@ -2,7 +2,7 @@ import axios from "axios";
 import { Endpoint } from "../Entities/endpoint";
 
 const api = axios.create({
-    baseURL: "https://localhost:7131",
+    baseURL: "http://localhost:5220/api",
     headers: {
         "Content-Type": "application/json",
     },
