@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class ResponseObjectController : ControllerBase
     {
@@ -50,6 +51,20 @@ namespace WebAPI.Controllers
             {
                 var responseObject = await _responseObjectInternalRepo.GetResponseObjectAsync(responseObjectID);
                 return Ok(responseObject);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllResponseObjectAsync()
+        {
+            try
+            {
+                var response = await _responseObjectInternalRepo.GetAllResponseObjectsAsync();
+                return Ok(response);
             }
             catch (Exception ex)
             {

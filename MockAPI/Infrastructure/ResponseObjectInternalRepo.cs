@@ -42,6 +42,11 @@ namespace Infrastructure
             return await _context.ResponseObjects.FirstOrDefaultAsync(e => e.Id == responseObjectID) ?? throw new KeyNotFoundException($"ResponseObject with ID {responseObjectID} not found.");
         }
 
+        public async Task<List<ResponseObject>> GetAllResponseObjectsAsync()
+        {
+            return await _context.ResponseObjects.ToListAsync();
+        }
+
         public async Task UpdateResponseObjectAsync(ResponseObject responseObject)
         {
             var responseObjectToUpdate = _context.ResponseObjects.FirstOrDefault(e => e.Id == responseObject.Id);

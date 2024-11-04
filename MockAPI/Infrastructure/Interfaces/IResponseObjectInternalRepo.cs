@@ -13,5 +13,6 @@ namespace Infrastructure.Interfaces
         Task DeleteResponseObjectAsync(Guid responseObjectID);
         Task<ResponseObject> GetResponseObjectAsync(Guid responseObjectID);
         Task UpdateResponseObjectAsync(ResponseObject responseObject);
+        Task<List<ResponseObject>> GetAllResponseObjectsAsync();
     }
 }
