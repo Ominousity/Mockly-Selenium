@@ -6,6 +6,7 @@ using Service;
 
 namespace WebAPI.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class EndpointController : ControllerBase
     {
@@ -16,9 +17,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEndpointAsync(Endpoint endpoint)
+        public async Task<IActionResult> AddEndpointAsync(EndpointDRO endpoint)
         {
-            await _repository.AddEndpointAsync(endpoint);
+            Endpoint endp = new Endpoint()
+            {
+                Name = endpoint.Name,
+                Method = endpoint.Method,
+                RandomizeResponse = endpoint.RandomizeResponse,
+                ResponseObject = endpoint.ResponseObject,
+                Delay = endpoint.Delay,
+                Path = endpoint.Path,
+                shouldFail = endpoint.shouldFail,
+            };
+            await _repository.AddEndpointAsync(endp);
             return Ok();
         }
 

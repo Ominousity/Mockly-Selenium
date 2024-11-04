@@ -2,6 +2,7 @@ using Infrastructure;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Service;
+using System.Text.Json;
 using WebAPI.middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:5173") // Specify your frontend origin
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Only add this if you need credentials (like cookies or authorization headers)
     });
 });
 
@@ -38,9 +42,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
-
 app.UseCors("AllowLocalhost");
+
+app.UseRouting();
 
 app.UseMiddleware<DynamicMockMiddleware>();
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Endpoint } from "../Entities/endpoint";
+import { Endpoint, EndpointPost } from "../Entities/endpoint";
 
 const api = axios.create({
     baseURL: "http://localhost:5220/api",
@@ -18,7 +18,7 @@ export const getEndpoints = async (endpoint: string) => {
     }
 };
 
-export const postEndpoint = async (endpoint: string, data: Endpoint) => {
+export const postEndpoint = async (endpoint: string, data: EndpointPost) => {
     try {
         const response = await api.post(endpoint, data);
         return response.data;
