@@ -1,4 +1,4 @@
-import { CircleDot, Braces, Settings } from "lucide-react"
+import { CircleDot, Braces, Settings, SidebarIcon } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -33,7 +33,9 @@ const items = [
   export function AppSidebar() {
     return (
       <Sidebar collapsible="icon">
-        <SidebarHeader />
+        <SidebarHeader>
+          <img src="/src/assets/logo_color2_with_name.png" alt="logo" className="w-20" />
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup />
           <SidebarGroupContent>
