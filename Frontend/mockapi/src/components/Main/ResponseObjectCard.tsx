@@ -1,4 +1,5 @@
-import { ResponseObject } from "@/Entities/responseObject";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ResponseObject } from "@/Entities/responseObject";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 
@@ -7,6 +8,66 @@ type ResponseObjectCardProps = {
   onUpdateClick: () => void;
   onDeleteClick: () => void;
 };
+
+const simplifyTypeName = (typeName: string) => {
+  if (typeName.includes("System.Collections.Generic.List")) {
+    return "List";
+  }if (typeName.includes("System.Collections.Generic.Dictionary")) {
+    return "Dictionary";
+  }
+    // Extract just the type name (e.g., "System.Int32" -> "Int32")
+    const parts = typeName.split('.');
+    return parts[parts.length - 1]; // Get the last part
+};
+
+// Recursive component to render nested data fields
+// @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+const renderDataField = (dataField: any) => {
+  if (dataField && typeof dataField === "object") {
+    if ("value" in dataField && Array.isArray(dataField.value)) {
+      // Handle arrays (lists)
+      return (
+        <div>
+          <p>Type: {simplifyTypeName(dataField.typeName)}</p>
+          <ul>
+            {/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
+              {dataField.value.map((item: any) => (
+              <li key={item.id || JSON.stringify(item)}>{renderDataField(item)}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    if ("typeName" in dataField) {
+      // Display the simplified type name
+      const typeLabel = simplifyTypeName(dataField.typeName);
+
+      return (
+        <div>
+          <p>Type: {typeLabel}</p>
+          <div>{renderDataField(dataField.value)}</div>
+        </div>
+      );
+    }
+
+    // Handle nested dictionaries
+    return (
+      <div>
+        {Object.keys(dataField).map((key) => (
+          <div key={key} className="pl-4">
+            <strong>{key}:</strong> {renderDataField(dataField[key])}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // For primitive values, display directly
+  return <p>{String(dataField)}</p>;
+};
+
 
 export function ResponseObjectCard({
   responseObject,
@@ -19,42 +80,13 @@ export function ResponseObjectCard({
         <CardTitle>{responseObject.id}</CardTitle>
       </CardHeader>
       <CardContent>
-        {Object.keys(responseObject.data).map((key: string) => {
+        {Object.keys(responseObject.data).map((key) => {
           const dataField = responseObject.data[key];
 
           return (
             <div key={key} className="p-2">
               <h3 className="text-lg font-bold">{key}</h3>
-
-              {/* Display the type name */}
-              <p>{String(dataField.typeName ?? "No Type Available")}</p>
-
-              {/* Check if value is a nested object, array, or a primitive */}
-              <div>
-                {typeof dataField.value === "object" ? (
-                  // If value is an object, check if it's an array or a nested object
-                  Array.isArray(dataField.value) ? (
-                    // Array of ObjectTypes
-                    <ul>
-                      {dataField.value.map((item, index) => (
-                        <li key={index}>
-                          {typeof item.value === "object" ? (
-                            <pre>{JSON.stringify(item.value, null, 2)}</pre>
-                          ) : (
-                            String(item.value)
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    // Nested dictionary object
-                    <pre>{JSON.stringify(dataField.value, null, 2)}</pre>
-                  )
-                ) : (
-                  // Primitive or directly serializable value
-                  <p>{String(dataField.value)}</p>
-                )}
-              </div>
+              {renderDataField(dataField)}
             </div>
           );
         })}

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(EndpointDbContext))]
-    [Migration("20241027155230_ChangedSomeOfitsdataPoints")]
-    partial class ChangedSomeOfitsdataPoints
+    [Migration("20241110135143_godHelpUs")]
+    partial class godHelpUs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,21 @@ namespace WebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Endpoints");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.ResponseObject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ResponseObjects");
                 });
 #pragma warning restore 612, 618
         }

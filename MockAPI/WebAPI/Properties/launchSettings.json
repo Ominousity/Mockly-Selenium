@@ -5,7 +5,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "cs": "Server=10.40.143.113;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
+        "type": "mssql",
+        "dev": "true"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5220"
@@ -15,7 +18,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "cs": "Server=10.40.143.113;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
+        "type": "mssql",
+        "dev": "true"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7131;http://localhost:5220"

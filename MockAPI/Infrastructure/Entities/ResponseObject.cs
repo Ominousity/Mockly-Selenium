@@ -1,197 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Infrastructure.Entities
 {
     public class ResponseObject
     {
         public Guid Id { get; set; }
-        public Dictionary<string, ObjectType> Data { get; set; } = new Dictionary<string, ObjectType>();
+
+        // Store the raw byte array instead of a Dictionary directly
+        public byte[] Data { get; set; } = new byte[0];
 
         public ResponseObject()
         {
             Id = Guid.NewGuid();
-            Data = new Dictionary<string, ObjectType>();
         }
 
-        public static byte[] SerializeHeaders(Dictionary<string, ObjectType> headers)
+        // Serialize Data to JSON for database storage as a byte array
+        public void SerializeData(Dictionary<string, CustomObject> data)
         {
-            var json = JsonSerializer.Serialize(headers);
-            return Encoding.UTF8.GetBytes(json);
+            var json = JsonSerializer.Serialize(data);
+            Data = Encoding.UTF8.GetBytes(json);
         }
 
-        public static Dictionary<string, ObjectType> DeserializeHeaders(byte[] data)
+        // Deserialize JSON back to Dictionary for in-memory use
+        public Dictionary<string, CustomObject> DeserializeData()
         {
-            var json = Encoding.UTF8.GetString(data);
-            return JsonSerializer.Deserialize<Dictionary<string, ObjectType>>(json)
-                   ?? new Dictionary<string, ObjectType>();
-        }
-
-        public static ResponseObject FromJson(string json)
-        {
-            var responseObject = new ResponseObject();
-            var dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-
-            if (dictionary != null)
-            {
-                foreach (var kvp in dictionary)
-                {
-                    responseObject.Data[kvp.Key] = ObjectType.Create(kvp.Value);
-                }
-            }
-
-            return responseObject;
+            var json = Encoding.UTF8.GetString(Data);
+            return JsonSerializer.Deserialize<Dictionary<string, CustomObject>>(json) ?? new Dictionary<string, CustomObject>();
         }
 
         public string ToJson()
         {
-            var dictionary = new Dictionary<string, object>();
+            return Encoding.UTF8.GetString(Data);
+        }
 
-            foreach (var kvp in Data)
-            {
-                dictionary[kvp.Key] = kvp.Value.Return();
-            }
-
-            return JsonSerializer.Serialize(dictionary);
+        public static ResponseObject FromJson(string json)
+        {
+            var data = JsonSerializer.Deserialize<Dictionary<string, CustomObject>>(json);
+            return new ResponseObject { Data = Encoding.UTF8.GetBytes(json) };
         }
     }
 
-    public class ObjectType
+    // Wrapper class to hold any type of value with explicit type information
+    public class CustomObject
     {
         public object Value { get; set; }
 
-        [JsonIgnore] // Exclude Type from serialization
-        public Type Type { get; set; }
+        // Serialize type name for reference
+        public string TypeName { get; set; }
 
-        // Store the type name as a string for serialization
-        public string TypeName
-        {
-            get => Type.FullName; // Full name with assembly for better type resolution
-            set => Type = Type.GetType(value) ?? throw new ArgumentException($"Invalid type: {value}");
-        }
+        public CustomObject() { }
 
-        // Parameterless constructor for deserialization
-        public ObjectType()
-        {
-            Value = null;
-            Type = typeof(object);
-        }
-
-        private ObjectType(object value, Type type)
+        public CustomObject(object value)
         {
             Value = value;
-            Type = type;
+            TypeName = value?.GetType().AssemblyQualifiedName;
         }
 
-        public static ObjectType Create(object value)
+        public static CustomObject Create(object value)
         {
-            if (value == null)
-            {
-                return new ObjectType(null, typeof(object));
-            }
-
-            Type type = value.GetType();
-
-            if (type == typeof(JsonElement))
-            {
-                JsonElement jsonElement = (JsonElement)value;
-
-                return jsonElement.ValueKind switch
-                {
-                    JsonValueKind.Object => CreateNestedObject(jsonElement),
-                    JsonValueKind.Array => CreateArray(jsonElement),
-                    JsonValueKind.String => new ObjectType(jsonElement.GetString(), typeof(string)),
-                    JsonValueKind.Number => CreateNumber(jsonElement),
-                    JsonValueKind.True or JsonValueKind.False => new ObjectType(jsonElement.GetBoolean(), typeof(bool)),
-                    _ => new ObjectType(null, typeof(object))
-                };
-            }
-
-            return new ObjectType(value, type);
+            return new CustomObject(value);
         }
 
-        private static ObjectType CreateNestedObject(JsonElement jsonElement)
+        public object? GetTypedValue()
         {
-            var nestedDict = new Dictionary<string, ObjectType>();
+            if (Value == null) return null;
 
-            foreach (var property in jsonElement.EnumerateObject())
+            if (Type.GetType(TypeName) is { } type)
             {
-                nestedDict[property.Name] = Create(property.Value);
+                return Convert.ChangeType(Value, type);
             }
 
-            return new ObjectType(nestedDict, typeof(Dictionary<string, ObjectType>));
-        }
-
-        private static ObjectType CreateArray(JsonElement jsonElement)
-        {
-            var elements = new List<ObjectType>();
-
-            foreach (var element in jsonElement.EnumerateArray())
-            {
-                elements.Add(Create(element));
-            }
-
-            return new ObjectType(elements, typeof(List<ObjectType>));
-        }
-
-        private static ObjectType CreateNumber(JsonElement jsonElement)
-        {
-            if (jsonElement.TryGetInt32(out int intValue))
-            {
-                return new ObjectType(intValue, typeof(int));
-            }
-            if (jsonElement.TryGetDouble(out double doubleValue))
-            {
-                return new ObjectType(doubleValue, typeof(double));
-            }
-
-            return new ObjectType(null, typeof(object));
-        }
-
-        public object? Return()
-        {
-            // Handle IConvertible types (like int, string, etc.)
-            if (Value is IConvertible || Value == null)
-            {
-                return Convert.ChangeType(Value, Type);
-            }
-            // Handle Dictionary<string, ObjectType> specifically
-            if (Value is Dictionary<string, ObjectType> dictionary)
-            {
-                var convertedDict = new Dictionary<string, object>();
-                foreach (var kvp in dictionary)
-                {
-                    convertedDict[kvp.Key] = kvp.Value.Return();
-                }
-                return convertedDict;
-            }
-            // Handle List<ObjectType> specifically
-            if (Value is List<ObjectType> list)
-            {
-                var convertedList = new List<object>();
-                foreach (var item in list)
-                {
-                    convertedList.Add(item.Return());
-                }
-                return convertedList;
-            }
-
-            if (Value is ObjectType[] array)
-            {
-                var convertedArray = new List<object>();
-                foreach (var item in array)
-                {
-                    convertedArray.Add(item.Return());
-                }
-                return convertedArray.ToArray();
-            }
-
-            // If the type is unhandled, return Value directly
             return Value;
+        }
+    }
+
+    public class ResponseObjectDto
+    {
+        public Guid Id { get; set; }
+
+        // Data as a Dictionary, suitable for JSON serialization
+        public Dictionary<string, CustomObject> Data { get; set; }
+
+        // Constructor that takes in the original ResponseObject entity
+        public ResponseObjectDto(ResponseObject responseObject)
+        {
+            Id = responseObject.Id;
+            Data = responseObject.DeserializeData();
+        }
+
+        // Method to convert DTO to ResponseObject
+        public ResponseObject ToEntity()
+        {
+            var responseObject = new ResponseObject
+            {
+                Id = this.Id
+            };
+            responseObject.SerializeData(this.Data);
+            return responseObject;
         }
     }
 }

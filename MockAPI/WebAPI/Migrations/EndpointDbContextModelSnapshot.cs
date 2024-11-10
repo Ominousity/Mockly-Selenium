@@ -57,6 +57,21 @@ namespace WebAPI.Migrations
 
                     b.ToTable("Endpoints");
                 });
+
+            modelBuilder.Entity("Infrastructure.Entities.ResponseObject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ResponseObjects");
+                });
 #pragma warning restore 612, 618
         }
     }

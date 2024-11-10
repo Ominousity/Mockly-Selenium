@@ -4,6 +4,7 @@ using Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -37,12 +38,13 @@ namespace Service
             if (endpoint.ResponseObject.HasValue)
             {
                 ResponseObject responseObject = await _responseObjectInternalRepo.GetResponseObjectAsync(endpoint.ResponseObject.Value);
+                ResponseObjectDto response = new ResponseObjectDto(responseObject);
 
                 if (endpoint.RandomizeResponse)
                 {
-                    responseObject = RandomizeResponseObject(responseObject);
+                    response = RandomizeResponseObject(response);
                 }
-                endpointDTO.ResponseObject = responseObject;
+                endpointDTO.ResponseObject = response;
             }
             return endpointDTO;
         }
@@ -57,38 +59,19 @@ namespace Service
             await _endpointInternalRepo.UpdateEndpointAsync(endpoint);
         }
 
-        private ResponseObject RandomizeResponseObject(ResponseObject responseObject)
+        private ResponseObjectDto RandomizeResponseObject(ResponseObjectDto responseObject)
         {
             foreach (var field in responseObject.Data.Values)
             {
                 object value = field.Value;
-                if (value is string)
-                {
-                    field.Value = WhatKindOfString(field.Value);
-                }
-                else if (value is int)
-                {
-                    field.Value = new Random().Next(0, 100);
-                }
-                else if (value is bool)
-                {
-                    field.Value = new Random().Next(0, 1) == 1;
-                }
-                else if (value is double)
-                {
-                    field.Value = new Random().NextDouble();
-                }
-                else if (value is DateTime)
-                {
-                    field.Value = DateTime.Now;
-                }
+                field.Value = WhatKindOfString(value);
             }
             return responseObject;
         }
 
         private object WhatKindOfString(object value)
         {
-            string stringValue = (string)value;
+            string stringValue = value.ToString();
             if (isDateTime(stringValue))
             {
                 return DateTime.Now.ToString();
@@ -107,11 +90,14 @@ namespace Service
             }
             else if (isStreetAddress(stringValue))
             {
-                return "1234 Elm St";
+                return MassiveInfoReader.GetRandomStreetName();
             }
             else if (IsName(stringValue))
             {
-                return "John Doe";
+                string firstName = MassiveInfoReader.GetRandomFirstName();
+                string lastName = MassiveInfoReader.GetRandomLastName();
+                string fullName = firstName + " " + lastName;
+                return fullName;
             }
             return stringValue;
         }

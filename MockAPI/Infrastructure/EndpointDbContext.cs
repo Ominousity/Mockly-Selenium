@@ -16,6 +16,7 @@ namespace Infrastructure
         }
 
         public DbSet<Endpoint> Endpoints { get; set; }
+        public DbSet<ResponseObject> ResponseObjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,15 @@ namespace Infrastructure
                     .IsRequired()
                     .HasConversion<int>(); // Store enums as integers
             });
+
+            modelBuilder.Entity<ResponseObject>()
+               .Property(e => e.Data)
+               .HasConversion(
+                   v => v, // Save as byte array directly
+                   v => v); // Load as byte array directly
+
+            modelBuilder.Entity<ResponseObject>()
+                .HasKey(e => e.Id);
         }
     }
 }

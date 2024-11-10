@@ -32,7 +32,7 @@ namespace Infrastructure.Entities
         public string Path { get; set; }
         public HttpMethods Method { get; set; }
         public int Delay { get; set; } = 0;
-        public ResponseObject? ResponseObject { get; set; }
+        public ResponseObjectDto? ResponseObject { get; set; }
 
         public EndpointDTO(Endpoint endpoint)
         {

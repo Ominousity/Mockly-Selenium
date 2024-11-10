@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Endpoint, EndpointPost } from "../Entities/endpoint";
+import type { Endpoint, EndpointPost } from "../Entities/endpoint";
 
 const api = axios.create({
     baseURL: "http://localhost:5220/api",

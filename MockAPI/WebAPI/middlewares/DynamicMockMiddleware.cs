@@ -3,6 +3,7 @@ using Infrastructure.Enums;
 using HttpMethods = Infrastructure.Enums.HttpMethods;
 using Service;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace WebAPI.middlewares
 {
@@ -47,7 +48,7 @@ namespace WebAPI.middlewares
                         // Write the mock response
                         if (mockEndpoint.ResponseObject != null)
                         {
-                            await context.Response.WriteAsync(mockEndpoint.ResponseObject.ToJson());
+                            await context.Response.WriteAsync(JsonSerializer.Serialize(mockEndpoint.ResponseObject));
                         }
                         else
                         {

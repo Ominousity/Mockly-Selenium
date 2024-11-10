@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangedSomeOfitsdataPoints : Migration
+    public partial class godHelpUs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,6 +28,18 @@ namespace WebAPI.Migrations
                 {
                     table.PrimaryKey("PK_Endpoints", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "ResponseObjects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResponseObjects", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -35,6 +47,9 @@ namespace WebAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Endpoints");
+
+            migrationBuilder.DropTable(
+                name: "ResponseObjects");
         }
     }
 }
