@@ -36,10 +36,10 @@ namespace Infrastructure.Entities
             return Encoding.UTF8.GetString(Data);
         }
 
-        public static ResponseObject FromJson(string json)
+        public static ResponseObject FromJson(JsonElement json)
         {
-            var data = JsonSerializer.Deserialize<Dictionary<string, CustomObject>>(json);
-            return new ResponseObject { Data = Encoding.UTF8.GetBytes(json) };
+            var data = json.ToString();
+            return new ResponseObject { Data = Encoding.UTF8.GetBytes(json.ToString()) };
         }
     }
 

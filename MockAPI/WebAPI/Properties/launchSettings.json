@@ -6,7 +6,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "cs": "Server=10.40.143.113;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
+        "cs": "Server=10.40.143.112;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
         "type": "mssql",
         "dev": "true"
       },
@@ -19,7 +19,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "cs": "Server=10.40.143.113;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
+        "cs": "Server=10.40.143.112;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;",
         "type": "mssql",
         "dev": "true"
       },

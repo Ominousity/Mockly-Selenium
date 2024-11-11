@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace WebAPI.Controllers
 {
@@ -15,7 +16,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddResponseObjectAsync([FromBody] string Json)
+        public async Task<IActionResult> AddResponseObjectAsync(JsonElement Json)
         {
             try
             {
