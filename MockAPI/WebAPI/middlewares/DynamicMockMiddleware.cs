@@ -48,7 +48,7 @@ namespace WebAPI.middlewares
                         // Write the mock response
                         if (mockEndpoint.ResponseObject != null)
                         {
-                            await context.Response.WriteAsync(JsonSerializer.Serialize(mockEndpoint.ResponseObject));
+                            await context.Response.WriteAsync(mockEndpoint.ResponseObject.ToJson());
                         }
                         else
                         {
