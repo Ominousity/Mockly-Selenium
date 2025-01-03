@@ -11,8 +11,8 @@ namespace Infrastructure
 {
     public class ResponseObjectInternalRepo : IResponseObjectInternalRepo
     {
-        private readonly ResponseObjectDbContext _context;
-        public ResponseObjectInternalRepo(ResponseObjectDbContext context) 
+        private readonly DatabaseContext _context;
+        public ResponseObjectInternalRepo(DatabaseContext context) 
         {
             _context = context;
         }

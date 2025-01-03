@@ -13,8 +13,8 @@ namespace Infrastructure
 {
     public class EndpointInternalRepo : IEndpointInternalRepo
     {
-        private readonly EndpointDbContext _context;
-        public EndpointInternalRepo(EndpointDbContext dbContext) 
+        private readonly DatabaseContext _context;
+        public EndpointInternalRepo(DatabaseContext dbContext) 
         {
             _context = dbContext;
         }

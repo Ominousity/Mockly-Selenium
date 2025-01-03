@@ -19,19 +19,13 @@ builder.Services.AddSwaggerGen();
 switch (SqlDatabaseType)
 {
     case "postgres":
-        builder.Services.AddDbContext<EndpointDbContext>(options =>
-            options.UseNpgsql(ConnectionString));
-
-        builder.Services.AddDbContext<ResponseObjectDbContext>(options =>
+        builder.Services.AddDbContext<DatabaseContext>(options =>
             options.UseNpgsql(ConnectionString));
         break;
 
     case "mssql":
-        builder.Services.AddDbContext<EndpointDbContext>(options =>
+        builder.Services.AddDbContext<DatabaseContext>(options =>
             options.UseSqlServer(ConnectionString, sqlOptions => sqlOptions.MigrationsAssembly("WebAPI")));
-
-        builder.Services.AddDbContext<ResponseObjectDbContext>(options =>
-            options.UseSqlServer(ConnectionString));
         break;
 }
 
