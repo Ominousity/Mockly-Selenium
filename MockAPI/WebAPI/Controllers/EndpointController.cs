@@ -19,6 +19,10 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEndpointAsync(EndpointDRO endpoint)
         {
+            if (!EndpointValidator(endpoint))
+            {
+                return BadRequest();
+            }
             Endpoint endp = new Endpoint()
             {
                 Name = endpoint.Name,
@@ -29,14 +33,30 @@ namespace WebAPI.Controllers
                 Path = endpoint.Path,
                 shouldFail = endpoint.shouldFail,
             };
-            await _repository.AddEndpointAsync(endp);
+
+            try
+            {
+                await _repository.AddEndpointAsync(endp);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
             return Ok();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteEndpointAsync(Guid endpointID)
         {
-            await _repository.DeleteEndpointAsync(endpointID);
+            try
+            {
+                await _repository.DeleteEndpointAsync(endpointID);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
             return Ok();
         }
 
@@ -50,8 +70,25 @@ namespace WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateEndpointAsync(Endpoint endpoint)
         {
-            await _repository.UpdateEndpointAsync(endpoint);
+            try
+            {
+                await _repository.UpdateEndpointAsync(endpoint);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
             return Ok();
+        }
+
+        private bool EndpointValidator(EndpointDRO endpoint)
+        {
+            if (string.IsNullOrEmpty(endpoint.Name) || string.IsNullOrEmpty(endpoint.Path) || string.IsNullOrEmpty(endpoint.ResponseObject.ToString()))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

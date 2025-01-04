@@ -54,6 +54,8 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseCors("AllowAll");
+
 app.UseMiddleware<DynamicMockMiddleware>();
 
 app.UseAuthorization();
