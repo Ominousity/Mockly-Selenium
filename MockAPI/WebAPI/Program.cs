@@ -8,9 +8,17 @@ using WebAPI.middlewares;
 var builder = WebApplication.CreateBuilder(args);
 
 //Env variabels
-var ConnectionString = Environment.GetEnvironmentVariable("cs") ?? "Server=10.40.143.113;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;";
-var SqlDatabaseType = Environment.GetEnvironmentVariable("type") ?? "mssql";
-var DevMode = Environment.GetEnvironmentVariable("dev") ?? "false";
+var ConnectionString = "Server=localhost;Database=Endpoints;User Id=sa;Password=pvg@zeq4RWQ3wxr-rhn;Trusted_Connection=False;TrustServerCertificate=True;";
+var SqlDatabaseType ="mssql";
+var DevMode = "false";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
