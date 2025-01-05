@@ -90,16 +90,16 @@ namespace WebAPI.Controllers
             {
                 return "Name is required & cannot be empty";
             }
+            else if (string.IsNullOrEmpty(endpoint.Path) || endpoint.Path == "/")
+            {
+                return "Path is required & cannot be empty or only contains '/'";
+            }
             else if (!string.IsNullOrEmpty(endpoint.ResponseObject.ToString())) // if response object id is empty let it pass
             {
                 if (!Guid.TryParse(endpoint.ResponseObject.ToString(), out Guid _))
                 {
                     return "Response Object ID must be a valid GUID";
                 }
-            }
-            else if (string.IsNullOrEmpty(endpoint.Path) || endpoint.Path == "/")
-            {
-                return "Path is required & cannot be empty or only contain '/'";
             }
             return "";
         }
