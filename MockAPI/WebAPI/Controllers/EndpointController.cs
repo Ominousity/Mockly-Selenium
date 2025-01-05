@@ -19,9 +19,11 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEndpointAsync(EndpointDRO endpoint)
         {
-            if (!EndpointValidator(endpoint))
+            string validation = EndpointValidator(endpoint);
+
+            if (validation != "")
             {
-                return BadRequest();
+                return BadRequest(validation);
             }
             Endpoint endp = new Endpoint()
             {
@@ -82,13 +84,24 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        private bool EndpointValidator(EndpointDRO endpoint)
+        private string EndpointValidator(EndpointDRO endpoint)
         {
-            if (string.IsNullOrEmpty(endpoint.Name) || string.IsNullOrEmpty(endpoint.Path) || string.IsNullOrEmpty(endpoint.ResponseObject.ToString()))
+            if (string.IsNullOrEmpty(endpoint.Name))
             {
-                return false;
+                return "Name is required & cannot be empty";
             }
-            return true;
+            else if (!string.IsNullOrEmpty(endpoint.ResponseObject.ToString())) // if response object id is empty let it pass
+            {
+                if (!Guid.TryParse(endpoint.ResponseObject.ToString(), out Guid _))
+                {
+                    return "Response Object ID must be a valid GUID";
+                }
+            }
+            else if (string.IsNullOrEmpty(endpoint.Path) || endpoint.Path == "/")
+            {
+                return "Path is required & cannot be empty or only contain '/'";
+            }
+            return "";
         }
     }
 }
